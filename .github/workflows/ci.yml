@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 26
+  PNPM_VERSION: 12
+
+jobs:
+  check:
+    name: Quality check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install
+
+      - name: Format and lint
+        run: pnpm biome ci
+
+      - name: Check types
+        run: pnpm run typecheck
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      DATABASE_NAME: habit_tracker_test
+      DATABASE_MAINTENANCE: postgres
+      DATABASE_PORT: 5432
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install
+
+      - name: Start database
+        run: docker compose up -d --wait db
+
+      - name: Test
+        env:
+          DATABASE_URL: postgresql://${{ env.DATABASE_USER }}:${{ env.DATABASE_PASSWORD }}@localhost:${{ env.DATABASE_PORT }}/${{ env.DATABASE_NAME }}
+        run: pnpm test
+
+      - name: Cleanup
+        if: always()
+        run: docker compose down -v
