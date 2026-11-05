@@ -2,7 +2,7 @@
 
 ## Alpha 1
 
-- [ ] set up the backend app and PostgreSQL persistence
+- [x] set up the backend app and PostgreSQL persistence
 - [ ] email OTP account sign-up and sign-in
 - [ ] sign-out
 - [ ] account recover
