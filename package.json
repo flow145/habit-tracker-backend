@@ -8,6 +8,7 @@
   "homepage": "https://github.com/flow145/habit-tracker-backend#readme",
   "bugs": "https://github.com/flow145/habit-tracker-backend/issues",
   "repository": "git@github.com:flow145/habit-tracker-backend.git",
+  "packageManager": "pnpm@12.16.1",
   "engines": {
     "node": ">=24.12.0",
     "pnpm": ">=11"
