@@ -51,6 +51,7 @@ jobs:
       DATABASE_PASSWORD: postgres
       DATABASE_NAME: habit_tracker_test
       DATABASE_MAINTENANCE: postgres
+      DATABASE_PORT: 5432
     steps:
       - name: Checkout
         uses: actions/checkout@v7
