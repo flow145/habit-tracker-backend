@@ -19,18 +19,24 @@
 
 The backend provides:
 
-- Email OTP authentication and session management.
+- User authentication.
 - Remote persistence for Habits and Entries only.
-- TinyBase synchronization between clients and the backend.
-- Account data isolation and account deletion.
-- Device management in a later iteration.
+- Synchronization between clients and the backend.
+- User data isolation.
+
+## Authentication
+
+- Better Auth provides email OTP sign-in and sessions. A valid OTP for an unknown email creates a User.
+- Development logs OTPs. Staging uses Resend's shared test sender, which is limited to verified test recipients until a sending domain is configured. Production uses Resend with `RESEND_FROM_EMAIL` on a verified domain.
+- Configure `BETTER_AUTH_SECRET` and `BETTER_AUTH_URL` in every runtime stage; use HTTPS for staging and production. Staging and production require `RESEND_API_KEY`; production also requires `RESEND_FROM_EMAIL`.
+- Alpha 1 deletion removes Better Auth records. When Alpha 2 adds remote habit data, User deletion must remove it too.
 
 ## Data ownership and storage
 
 - PostgreSQL is the remote persistent store.
-- TinyBase persists account data as tabular data in PostgreSQL. The backend does not define or maintain separate application tables for Habits and Entries.
-- Remote data belongs to an authenticated account.
-- Users must not be able to read or modify another account's data.
+- TinyBase persists user data as tabular data in PostgreSQL. The backend does not define or maintain separate application tables for Habits and Entries.
+- Remote data belongs to an authenticated User.
+- Users must not be able to read or modify another User's data.
 
 ## Synchronization model
 
@@ -40,4 +46,4 @@ The backend provides:
 - Clients synchronize with the backend over a WebSocket connection provided by TinyBase.
 - Do not add custom conflict-resolution behavior initially.
 
-The exact TinyBase integration, WebSocket setup, persistence adapter, and deletion behavior remain implementation-time research tasks.
+The exact TinyBase integration, WebSocket setup, persistence adapter, and remote data deletion behavior remain implementation-time research tasks.

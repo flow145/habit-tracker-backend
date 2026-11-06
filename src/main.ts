@@ -1,7 +1,7 @@
 import { app } from '#/app.ts'
 import { env } from '#/config/env.ts'
 import { logger } from '#/config/logger.ts'
-import { connectDb, sql } from '#/db/connection.ts'
+import { connectDb, db } from '#/db/connection.ts'
 
 let isShuttingDown = false
 
@@ -24,7 +24,7 @@ const main = async () => {
       }
 
       try {
-        await sql.end()
+        await db.end()
         logger.info('Server shut down gracefully')
         process.exit(0)
       } catch (shutdownError) {

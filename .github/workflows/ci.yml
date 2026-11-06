@@ -73,9 +73,12 @@ jobs:
       - name: Start database
         run: docker compose up -d --wait db
 
-      - name: Test
+      - name: Migrate db schema
         env:
-          DATABASE_URL: postgresql://${{ env.DATABASE_USER }}:${{ env.DATABASE_PASSWORD }}@localhost:${{ env.DATABASE_PORT }}/${{ env.DATABASE_NAME }}
+          APP_STAGE: test
+        run: pnpm db:migrate
+
+      - name: Test
         run: pnpm test
 
       - name: Cleanup

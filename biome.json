@@ -19,7 +19,6 @@
     }
   },
   "markdown": {
-    "analyzeEmbeds": true,
     "parser": {
       "frontmatter": true
     }
