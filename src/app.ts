@@ -5,11 +5,11 @@ import cors from 'cors'
 import express, { type RequestHandler } from 'express'
 import rateLimit from 'express-rate-limit'
 import helmet from 'helmet'
-import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 
 import { auth } from '#/auth/auth.ts'
 import { env } from '#/config/env.ts'
 import { httpLogger, logger } from '#/config/logger.ts'
+import { healthRouter } from '#/health/health.ts'
 
 export const createApp = (authHandler: RequestHandler = toNodeHandler(auth)) => {
   const app = express()
@@ -37,12 +37,7 @@ export const createApp = (authHandler: RequestHandler = toNodeHandler(auth)) => 
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }))
 
-  app.get('/health', (_req, res) => {
-    res.status(StatusCodes.OK).json({
-      status: ReasonPhrases.OK,
-      timestamp: new Date().toISOString(),
-    })
-  })
+  app.use(healthRouter)
 
   return app
 }
