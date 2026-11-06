@@ -6,12 +6,12 @@ Provide optional account-based synchronization of habit data across devices and 
 
 Users can use the app without an account. Local-first functionality and offline habit tracking must continue to work independently of the backend.
 
-## Authentication and accounts
+## Authentication and users
 
-- Support account sign-up and sign-in with email one-time passwords (OTP).
+- Support user sign-up and sign-in with email one-time passwords (OTP).
 - Support sign-out without deleting local data.
-- Support account deletion, including deletion of the account's remote data.
-- Leave local data untouched after account deletion.
+- Support User deletion.
+- Leave local data untouched after User deletion.
 
 ## Data
 
@@ -26,7 +26,7 @@ Users can use the app without an account. Local-first functionality and offline 
 - Start synchronization immediately after sign-up or sign-in.
 - Merge local and remote data when both contain data.
 - Continue to support local use while offline; synchronize changes after reconnection.
-- For now, signing into another account on a device with existing local data also merges the data.
+- For now, signing into another User identity on a device with existing local data also merges the data.
 
 ## Data recovery
 

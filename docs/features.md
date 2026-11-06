@@ -3,11 +3,10 @@
 ## Alpha 1
 
 - [x] set up the backend app and PostgreSQL persistence
-- [ ] email OTP account sign-up and sign-in
-- [ ] sign-out
-- [ ] account recover
-- [ ] account deletion
-- [ ] health check and application logging
+- [x] email OTP user sign-up and sign-in
+- [x] sign-out
+- [x] User deletion
+- [x] health check and application logging
 
 ## Alpha 2
 

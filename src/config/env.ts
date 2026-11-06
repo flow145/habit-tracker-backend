@@ -1,3 +1,4 @@
+import { randomBytes } from 'node:crypto'
 import { env as loadEnv } from 'custom-env'
 import { z } from 'zod'
 
@@ -5,9 +6,18 @@ process.env.APP_STAGE = process.env.APP_STAGE || 'dev'
 
 const isDevelopment = process.env.APP_STAGE === 'dev'
 const isTesting = process.env.APP_STAGE === 'test'
+const isStaging = process.env.APP_STAGE === 'staging'
+const isProduction = process.env.APP_STAGE === 'prod'
+
+const genSecret = () => randomBytes(32).toString('base64url')
 
 if (isDevelopment) loadEnv('development')
 if (isTesting) loadEnv('test')
+
+const httpUrlOrLocalhost = z.union([
+  z.httpUrl(),
+  z.url({ protocol: /^https?$/, hostname: /^localhost$/ }),
+])
 
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
@@ -23,9 +33,7 @@ const envSchema = z.object({
         .map((origin) => origin.trim())
         .filter(Boolean),
     )
-    .pipe(
-      z.array(z.union([z.httpUrl(), z.url({ protocol: /^https?$/, hostname: /^localhost$/ })])),
-    ),
+    .pipe(z.array(httpUrlOrLocalhost)),
 
   RATE_LIMIT_WINDOW_MS: z.coerce
     .number()
@@ -39,13 +47,28 @@ const envSchema = z.object({
     .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent'])
     .default(isDevelopment ? 'debug' : 'info'),
 
-  DATABASE_URL: z
-    .url()
-    .refine((url) => url.startsWith('postgresql://') || url.startsWith('postgres://'), {
-      message: 'Must be a valid Postgres URL',
-    }),
+  DATABASE_USER: z.string().min(1),
+  DATABASE_PASSWORD: z.string().min(1),
+  DATABASE_HOST: z
+    .string()
+    .trim()
+    .min(1)
+    .default(isDevelopment || isTesting ? 'localhost' : ''),
+  DATABASE_PORT: z.coerce.number().int().min(1).max(65535).default(5432),
+  DATABASE_NAME: z.string().min(1),
   DATABASE_POOL_MIN: z.coerce.number().min(0).default(2),
   DATABASE_POOL_MAX: z.coerce.number().positive().max(50).default(10),
+
+  BETTER_AUTH_SECRET: isTesting ? z.string().min(32).default(genSecret()) : z.string().min(32),
+  BETTER_AUTH_URL: isTesting
+    ? httpUrlOrLocalhost.default('http://localhost:3000')
+    : httpUrlOrLocalhost,
+
+  RESEND_API_KEY:
+    isStaging || isProduction ? z.string().trim().min(1) : z.string().default('not-configured'),
+  RESEND_FROM_EMAIL: isProduction
+    ? z.string().trim().min(1)
+    : z.string().default('Habit Tracker <onboarding@resend.dev>'),
 })
 
 export type Env = z.infer<typeof envSchema>
@@ -59,7 +82,10 @@ try {
     console.error('❌ Invalid environment variables:')
 
     error.issues.forEach(({ path, message, code, input }) => {
-      console.log(`${path.join('.')}: ${message}, code: ${code}, input: ${input}`)
+      const key = path.join('.')
+      const safeInput =
+        input !== undefined && /(?:SECRET|API_KEY|TOKEN|PASSWORD)/i.test(key) ? '[REDACTED]' : input
+      console.log(`${key}: ${message}, code: ${code}, input: ${safeInput}`)
     })
 
     process.exit(1)
