@@ -40,7 +40,7 @@ const envSchema = z.object({
     .int()
     .min(1000)
     .max(60 * 60 * 1000)
-    .default(15 * 60 * 1000),
+    .default(10 * 1000),
   RATE_LIMIT_MAX_REQUESTS: z.coerce.number().int().min(1).max(10_000).default(100),
 
   LOG_LEVEL: z
