@@ -2,9 +2,9 @@
 
 The backend for a local-first habit tracker web app that optionally syncs your data across devices.
 
-## Project context
+## Backend context
 
-- `docs/vision.md` defines the product principles
-- `docs/requirements.md` defines observable backend behavior
-- `docs/architecture.md` records the intended stack and data/sync boundaries
-- `docs/features.md` tracks delivery work
+- `docs/architecture.md` records backend implementation boundaries and stack.
+- `docs/features.md` tracks backend delivery work.
+
+For Better Auth setup, read `.agents/skills/better-auth-best-practices/SKILL.md`. For security, session, or secret changes, read `.agents/skills/better-auth-security-best-practices/SKILL.md` as well.
