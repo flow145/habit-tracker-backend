@@ -1,7 +1,7 @@
 import { type BetterAuthOptions, betterAuth } from 'better-auth'
 import { emailOTP } from 'better-auth/plugins/email-otp'
 
-import { env } from '#/config/env.ts'
+import { env, isStagingEnv } from '#/config/env.ts'
 import { db } from '#/db/connection.ts'
 
 import { sendVerificationOTP } from './email-otp.ts'
@@ -18,6 +18,11 @@ export const authOptions = {
       enabled: true,
     },
   },
+  ...(isStagingEnv() && {
+    advanced: {
+      defaultCookieAttributes: { sameSite: 'none', secure: true },
+    },
+  }),
 } satisfies BetterAuthOptions
 
 export const auth = betterAuth(authOptions)
