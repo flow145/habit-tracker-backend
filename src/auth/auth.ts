@@ -13,6 +13,9 @@ export const authOptions = {
   database: db,
   trustedOrigins: env.CORS_ORIGINS,
   plugins: [emailOTP({ sendVerificationOTP })],
+  emailVerification: {
+    autoSignInAfterVerification: true,
+  },
   user: {
     deleteUser: {
       enabled: true,

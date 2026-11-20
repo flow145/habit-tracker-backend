@@ -13,9 +13,10 @@ const otpEmailCopy: Record<OTPType, { subject: string; instruction: string }> = 
     subject: 'Your Habit Tracker sign-in code',
     instruction: 'Use this code to sign in to Habit Tracker:',
   },
+  // Reserved for confirming User deletion when the Session is no longer fresh.
   'email-verification': {
-    subject: 'Verify your Habit Tracker email',
-    instruction: 'Use this code to verify your email address:',
+    subject: 'Confirm deleting your Habit Tracker account',
+    instruction: 'Use this code to confirm deleting your Habit Tracker account:',
   },
   'forget-password': {
     subject: 'Your Habit Tracker password reset code',
